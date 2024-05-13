@@ -1,3 +1,4 @@
+import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -8,6 +9,15 @@ from fast_zero.app import app
 from fast_zero.database import get_session
 from fast_zero.models import User, table_registry
 from fast_zero.security import get_password_hash
+
+
+class UserFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: f'teste{n}')
+    email = factory.LazyAttribute(lambda obj: f'{obj.username}@teste.com')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}321')
 
 
 @pytest.fixture()
@@ -51,6 +61,7 @@ def user(session):
     password = '1234'
     hash_pass = get_password_hash(password)
     user = User(username='Teste', email='teste@teste.com', password=hash_pass)
+    # user = UserFactory(password=hash_pass)
     session.add(user)
     session.commit()
     session.refresh(user)
@@ -67,6 +78,21 @@ def user2(session):
         username='Teste2', email='teste2@teste.com', password=hash_pass
     )
 
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    user.clean_password = password
+    return user
+
+
+@pytest.fixture()
+def other_user(session):
+    password = '1234'
+    hash_pass = get_password_hash(password)
+    # user = User(username='Teste',
+    # email='teste@teste.com', password=hash_pass)
+    user = UserFactory(password=hash_pass)
     session.add(user)
     session.commit()
     session.refresh(user)
