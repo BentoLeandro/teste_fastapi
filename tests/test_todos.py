@@ -30,6 +30,8 @@ def test_create_todo(client, token):
         'title': 'Teste todo',
         'description': 'Teste todo descrição',
         'state': 'draft',
+        'created_at': response.json()['created_at'],
+        'updated_at': response.json()['updated_at'],
     }
 
 
