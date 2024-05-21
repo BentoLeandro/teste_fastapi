@@ -130,7 +130,7 @@ def test_list_todos_filter_combined_return_5_todos(
     session.commit()
 
     response = client.get(
-        '/todos/?title=Teste todo combined&description=combined&state=done',
+        '/todos/?title=Teste todo combined&description=Combined&state=done',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert len(response.json()['todos']) == expected_todos
